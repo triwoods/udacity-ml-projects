@@ -58,7 +58,7 @@ One problem still remains though, is for general speech related problems, especi
 
 
 
-![diagram](C:\Sen\Project\machine-learning-master\projects\capstone\image\diagram.png)
+![diagram](image\diagram.png)
 
 Given that we have all the parameterized speech feature data after pruning out the silence, we can train a neural network model to predict from LB spectral features to LB spectral features, as shown in the Figure above. We plan the use the classical spectral representation of speech - line spectral frequency (LSF), which is widely used in speech coding and speech enhancement. Another widely used spectral feature is Mel frequency cepstrum coefficient (MFCC), which is widely used in speech recognition and synthesis for acoustic modeling. For the low-band or narrowband speech, a 10th order LPC analysis is sufficient enough to capture the speech spectral shape between 100Hz to 4kHz. For the high-band speech, a 6th order LPC analysis is more than enough to characterize spectral shape above 4kHz. As a results, the input low-band LSFs will have dimension of 10, and the output high-band LSFs will have the dimension of 6 respectively.
 
