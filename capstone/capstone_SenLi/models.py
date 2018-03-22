@@ -4,18 +4,35 @@
 # from sklearn.neighbors import KNeighborsRegressor
 
 from keras.models import Sequential
-from keras.layers.core import Dense, Activation
+from keras.layers import Dense, LSTM, Dropout, Activation
 
-def linear_regression():
+def linear_regression(dim_in, dim_out):
     model = Sequential()
-    model.add(Dense(6, input_shape=(10,), activation='linear'))
+    model.add(Dense(dim_out, input_shape=(dim_in,), activation='linear'))
     model.compile(loss='mse', optimizer='adam')
+    model.summary()
     return model
 
-
-def mlp():
+def mlp(dim_in, dim_out, nl=1, nn=128, dropout=False):
     model = Sequential()
-    model.add(Dense(128, input_shape=(10,), activation='relu'))
-    model.add(Dense(6))
+    model.add(Dense(nn, input_shape=(dim_in,), activation='relu'))
+    for i in range(nl-1):
+        model.add(Dense(nn, activation='relu'))
+        if dropout:
+            model.add(Dropout(0.5))
+    model.add(Dense(dim_out))
     model.compile(loss='mse', optimizer='adam')
+    model.summary()
+    return model
+
+def lstm(dim_in, dim_out, time_step, nl=1, nn=32):
+    model = Sequential()
+    model.add(LSTM(nn, return_sequences=bool(nl-1), input_shape=(time_step, dim_in)))
+    if nl > 1:
+        for nl in range(nl-2):
+            model.add(LSTM(nn, return_sequences=True))
+        model.add(LSTM(nn, return_sequences=False))
+    model.add(Dense(dim_out))
+    model.compile(loss='mse', optimizer='adam')
+    model.summary()
     return model
