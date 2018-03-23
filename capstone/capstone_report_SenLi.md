@@ -252,15 +252,15 @@ _(approx. 1-2 pages)_
 
 
 
-![WB_Spectrogram](A:\udacity-ml-projects\capstone\image\WB_Spectrogram.png)
+![WB_Spectrogram](/image/WB_Spectrogram.png)
 
 
 
-![NB_Spectrogram](A:\udacity-ml-projects\capstone\image\NB_Spectrogram.png)
+![NB_Spectrogram](/image/NB_Spectrogram.png)
 
 
 
-![BBE_Spectrogram](A:\udacity-ml-projects\capstone\image\BBE_Spectrogram.png)
+![BBE_Spectrogram](/image/BBE_Spectrogram.png)
 
 
 
