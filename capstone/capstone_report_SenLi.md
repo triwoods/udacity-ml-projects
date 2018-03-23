@@ -19,7 +19,11 @@ Various approaches to BBE have been proposed and studied. Vector Quantization (V
 
 Recent advancement in neural networks learning, especially deep learning, suggested that such framework may have the potential to model more complex non-linear relationship between speech LB and HB, which leads to our proposal of this project. In this project, we studied the neural networks approach for blind bandwidth extension - in particular, from speech LB spectral features to accurately predict speech HB spectral features, such as line spectral frequencies (LSFs). Mean squared error (MSE), which is widely used for many regression modeling problems, is used as the error metric between predicted HB features and target HB features in our project.
 
-![diagram](/image/diagram.png)
+
+
+![diagram](./image/diagram.png)
+
+
 
 Since the BBE should be a generic speech enhancement algorithm, it should perform equally well for both male and female, and across various talkers and different languages. The ideal dataset for this project would be a multi-lingual speech database that contains multiple talkers and covers many languages. We decided to use the NTT 1994 multi-lingual corpus, containing 21 languages, 4 female and 4 male talks for each of the language [9]. Unfortunately, this speech corpus is not publicly available for free and the size of dataset is very large, we therefore extracted the speech features from the raw speech signal for the project purpose. For our test inputs, we evaluated the BBE performance on ITU P.501 British English test signal [10]. 
 
@@ -35,26 +39,26 @@ In this project, we built and implemented a speech HB spectral prediction module
 ### Data Exploration
 The data that we used for training and testing the models are the speech spectral shape features extracted from the raw speech waveform and its frequency domain representation through Fourier Transform. Line spectral frequency is a classical spectral representation of speech, not only because it is a very compact representation, compared to a 512 or 1024 points FFT, but also because of its noise robust numerical property that made it insensitive to coding noise. LSFs also contain valuable information regarding the stableness of the vocal tract filter. The LSF values lie between (0, pi/2) in the radius frequency domain and the values are in monotonic increasing order, indicating a stable vocal tract filter response. The Figure below shows a typical 10th order LB LSF.
 
-![LB_LSF_values](/image/LB_LSF_values.png)
+![LB_LSF_values](./image/LB_LSF_values.png)
 
 Given the interesting property of LSF values, we also investigate their distribution across training dataset. The Figure below shows the histogram of all LB LSFs features used for  training. We can observe that all the 10 dimensions of the feature are close to Gaussian distribution, except for some minor tails on both side of the dimension. As we discussed before, all the LSFs are within 0 and pi/2. Based on the data distribution, which are close to the optimal input space that most neural network operates upon, and also considered to keep the ordering property of the LSFs, we decided not to do special handling for data normalization and transformation. Even though we noticed that the mean of each dimension is not centered at 0, hopefully the biases parameters in the neural network model should be more than sufficient to compensate for this small value shift. 
 
-![LB_LSF_hist](A:\udacity-ml-projects\capstone\image\LB_LSF_hist.png)
+![LB_LSF_hist](./image/LB_LSF_hist.png)
 
 The HB LSFs distribution of the training dataset is close to that of LB LSFs, as shown in the Figure below. It's important to note that all the data used in these Figure after the necessary pre-processing step, described in data pre-processing section, from which all the abnormalities and outliers were removed. Since we pruned the background silence from the original speech corpus before extracting the speech features, the distribution here is truly representing the active speech.
 
-![HB_LSF_hist](A:\udacity-ml-projects\capstone\image\HB_LSF_hist.png)
+![HB_LSF_hist](./image/HB_LSF_hist.png)
 
 
 
 ### Exploratory Visualization
 Normally the LSFs comes in pairs and each pair of LSFs indicates the location of speech formant, or energy peak in frequency domain. The closer a pair of LSFs are, the more energy the formant contains, translating to a sharper peak in frequency domain. The Figure below illustrates several examples of 10th-order LB LSFs from the training dataset.
 
-![LB_LSF_spectral_shape](/image/LB_LSF_spectral_shape.png)
+![LB_LSF_spectral_shape](./image/LB_LSF_spectral_shape.png)
 
 Different from the LB LSFs, which contain the most of human speech energy and have more strong formant peaks, speech HB formant are flatter and contain much less energy, resulting in a much spread out distribution of LSF values - no pair of LSF stay close, as shown in the Figure below, which correspond to the three LB LSFs in the Figure above.
 
-![HB_LSF_spectral_shape](/image/HB_LSF_spectral_shape.png)
+![HB_LSF_spectral_shape](./image/HB_LSF_spectral_shape.png)
 
 
 
@@ -85,7 +89,7 @@ From the results below, with the full training data, the best MSE on validation 
 
 
 
-![result_VQ_codebook](/image/result_VQ_codebook.png)
+![result_VQ_codebook](./image/result_VQ_codebook.png)
 
 
 
@@ -101,11 +105,11 @@ For the linear regression model, we trained a model to learn the direct linear m
 
 
 
-![train_linear_regression](/image/train_linear_regression.png)
+![train_linear_regression](./image/train_linear_regression.png)
 
 results
 
-![result_linear_regression](/image/result_linear_regression.png)
+![result_linear_regression](./image/result_linear_regression.png)
 
 
 
@@ -157,11 +161,11 @@ The results of the basic MLP model can be found below, we trained the model usin
 
 
 
-![train_mlp](/image/train_mlp.png)
+![train_mlp](./image/train_mlp.png)
 
 
 
-![result_mlp](/image/result_mlp.png)
+![result_mlp](./image/result_mlp.png)
 
 
 
@@ -179,11 +183,11 @@ We improved the basic MLP model with 128 neurons for each layer in a deeper arch
 
 
 
-![train_mlp_improved](/image/train_mlp_improved.png)
+![train_mlp_improved](./image/train_mlp_improved.png)
 
 
 
-![result_mlp_improved](/image/result_mlp_improved.png)
+![result_mlp_improved](./image/result_mlp_improved.png)
 
 
 
@@ -201,11 +205,11 @@ In order to utilize temporal information from the dataset, we implemented the ba
 
 
 
-![train_lstm](/image/train_lstm.png)
+![train_lstm](./image/train_lstm.png)
 
 
 
-![result_lstm](/image/result_lstm.png)
+![result_lstm](./image/result_lstm.png)
 
 
 
@@ -223,11 +227,11 @@ We also improved the LSTM model by allowing more temporal information in the inp
 
 
 
-![train_lstm_improved](/image/train_lstm_improved.png)
+![train_lstm_improved](./image/train_lstm_improved.png)
 
 
 
-![result_lstm_improved](/image/result_lstm_improved.png)
+![result_lstm_improved](./image/result_lstm_improved.png)
 
 
 
@@ -238,7 +242,7 @@ With the proper handle during the training, all the models above were aligned wi
 ### Justification
 After evaluating on all the previous models, the following Figure illustrate our final ranking on our models. Compared to the conventional benchmark models, including VQ codebook mapping and linear regression approaches, all neural network based architecture showed the strengths in outperforming the benchmark models by more accurately modelled the non-linear relationship between speech LB spectral shape and speech HB spectral shape. Given all the performance below, I would choose the Basic LSTM model as my final model, given the fact that it achieve the lowest error in test set and with less parameters compared to the improved version of itself. Given the fact that the conventional VQ codebook mapping have already produced reasonable result, our final model achieved 32% improvement on top of that, which is a convincing fact that the model should be a good candidate for this bandwidth extension problem.
 
-![final_ranking](/image/final_ranking.png)
+![final_ranking](./image/final_ranking.png)
 
 
 
@@ -248,19 +252,19 @@ _(approx. 1-2 pages)_
 ### Free-Form Visualization
 
 
-![BBE_frame_work](/image/BBE_frame_work.png)
+![BBE_frame_work](./image/BBE_frame_work.png)
 
 
 
-![WB_Spectrogram](/image/WB_Spectrogram.png)
+![WB_Spectrogram](./image/WB_Spectrogram.png)
 
 
 
-![NB_Spectrogram](/image/NB_Spectrogram.png)
+![NB_Spectrogram](./image/NB_Spectrogram.png)
 
 
 
-![BBE_Spectrogram](/image/BBE_Spectrogram.png)
+![BBE_Spectrogram](./image/BBE_Spectrogram.png)
 
 
 
