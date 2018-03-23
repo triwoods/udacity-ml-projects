@@ -250,6 +250,22 @@ _(approx. 1-2 pages)_
 
 ![BBE_frame_work](/image/BBE_frame_work.png)
 
+
+
+![WB_Spectrogram](A:\udacity-ml-projects\capstone\image\WB_Spectrogram.png)
+
+
+
+![NB_Spectrogram](A:\udacity-ml-projects\capstone\image\NB_Spectrogram.png)
+
+
+
+![BBE_Spectrogram](A:\udacity-ml-projects\capstone\image\BBE_Spectrogram.png)
+
+
+
+
+
 In this section, you will need to provide some form of visualization that emphasizes an important quality about the project. It is much more free-form, but should reasonably support a significant result or characteristic about the problem that you want to discuss. Questions to ask yourself when writing this section:
 
 - _Have you visualized a relevant or important quality about the problem, dataset, input data, or results?_
