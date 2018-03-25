@@ -11,16 +11,20 @@ def deltas(x, n=1):
     xf = np.roll(x, -n, axis=0)
     return (xf - xb)/2
 
-def transform_for_rnn(x, time_step):
-    dim_x = x.shape[1]
+def serialized(x, step_left=1, step_right=1):
+    dim_x = x.shape[-1]
+    total_steps = step_left + step_right + 1
+    
+    x = np.roll(x, -step_right, axis=0)
     y = x
-    for i in range(time_step - 1):
+    for i in range(step_left + step_right):
         xr = np.roll(x, 1, axis=0)
         y = np.hstack((xr, y))
         x = xr
-    return y.reshape((-1, time_step, dim_x))
+    return y.reshape((-1, total_steps, dim_x))
 
-def train_valid_split(X, y, valid_size=0.1, shuffle=False, random_state=0):
+def train_valid_split(X, y, step_left=0, step_right=0, valid_size=0.1, shuffle=False, random_state=0):
+    X = serialized(X, step_left, step_right)
     data_size = X.shape[0]
     valid_len = int(data_size * valid_size)
     x = np.arange(data_size)
@@ -28,7 +32,7 @@ def train_valid_split(X, y, valid_size=0.1, shuffle=False, random_state=0):
         np.random.seed(random_state)
         np.random.shuffle(x)
     index_train, index_valid = x[valid_len:], x[:valid_len]
-    return X[index_train, :], X[index_valid, :], y[index_train, :], y[index_valid, :]
+    return X[index_train, :, :], X[index_valid, :, :], y[index_train, :], y[index_valid, :]
 
 # Time utilities
 def second_to_hms(second):
