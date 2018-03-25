@@ -1,7 +1,8 @@
 from keras.models import Sequential
 from keras.layers import Dense, LSTM, Dropout, Activation
+from keras.optimizers import Adam
 
-def linear_regression(dim_in, dim_out):
+def linear_regression(dim_in, dim_out, lr=1e-3):
     """
     Linear regression model
     dim_in: input dimension
@@ -9,11 +10,13 @@ def linear_regression(dim_in, dim_out):
     """
     model = Sequential()
     model.add(Dense(dim_out, input_shape=(dim_in,), activation='linear'))
-    model.compile(loss='mse', optimizer='adam')
+    
+    opt = Adam(lr=lr)
+    model.compile(loss='mse', optimizer=opt)
     model.summary()
     return model
 
-def mlp(dim_in, dim_out, nl=1, nn=128, dropout=False):
+def mlp(dim_in, dim_out, nl=1, nn=128, dropout=False, lr=1e-3):
     """
     Multilayer perceptron network
     dim_in: input dimension
@@ -29,11 +32,13 @@ def mlp(dim_in, dim_out, nl=1, nn=128, dropout=False):
         if dropout:
             model.add(Dropout(0.5))
     model.add(Dense(dim_out))
-    model.compile(loss='mse', optimizer='adam')
+    
+    opt = Adam(lr=lr)
+    model.compile(loss='mse', optimizer=opt)
     model.summary()
     return model
 
-def lstm(dim_in, dim_out, time_step, nl=1, nn=32):
+def lstm(dim_in, dim_out, time_step, nl=1, nn=32, lr=1e-3):
     """
     Long short-term memory network
     dim_in: input dimension
@@ -49,6 +54,8 @@ def lstm(dim_in, dim_out, time_step, nl=1, nn=32):
             model.add(LSTM(nn, return_sequences=True))
         model.add(LSTM(nn, return_sequences=False))
     model.add(Dense(dim_out))
-    model.compile(loss='mse', optimizer='adam')
+    
+    opt = Adam(lr=lr)
+    model.compile(loss='mse', optimizer=opt)
     model.summary()
     return model
