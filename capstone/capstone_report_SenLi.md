@@ -15,13 +15,15 @@ Blind bandwidth extension (BBE) technology aims at solving this problem by trans
 
 ### Problem Statement
 
-Various approaches to BBE have been proposed and studied. Vector Quantization (VQ) codebook mapping is one of the classical method, which creates discreet mapping of speech parameters from LB to HB [5][6]. Gaussian Mixture Models(GMM) based method are used to preserve a more accurate transformation between LB and HB by modeling the speech envelope parameter continuously [7]. Hidden Markov Model (HMM) was the extension of GMM to improve the quality during speech transition by exploiting speech temporal information [8]. Recent advancement in neural networks learning, especially deep learning, suggested that such framework may have the potential to model complex non-linear relationship between speech LB and HB, which leads to our proposal of this project. 
-
-In this project, we studied several neural network based models, including multi-layer perceptron (MLP) and long short-term memory (LSTM), for BBE. In particular, the model input are speech LB line spectral frequencies (LSFs)  and the model output are speech HB LSFs. The model training diagram can be seen in the Figure below.
+The goal for this project is to build a regression model using speech LB lines spectral frequencies (LSFs) as input with speech HB LSFs as target. We will use mean squared error (MSE) as the metric for measureing success. We will try multilayer perceptron (MLP) and long short-term memory (LSTM) based networks models. We hope to demonstrate that neural network based models are better than conventional models for BBE problems and in particular, LSTM based neural networks model will outperfrom MLP models given that LSTM based models are capable of handling temporal information in time series date, such as speech. The project high level diagram can be seen in the Figure below.
 
 
 
 ![diagram](./image/diagram.png)
+
+
+
+Various approaches to BBE have been proposed and studied. Vector Quantization (VQ) codebook mapping is one of the classical method, which creates discreet mapping of speech parameters from LB to HB [5][6]. Gaussian Mixture Models(GMM) based method are used to preserve a more accurate transformation between LB and HB by modeling the speech envelope parameter continuously [7]. Hidden Markov Model (HMM) was the extension of GMM to improve the quality during speech transition by exploiting speech temporal information [8]. Recent advancement in neural networks learning, especially deep learning, suggested that such framework may have the potential to model complex non-linear relationship between speech LB and HB, which leads to our proposal of this project. 
 
 
 
@@ -224,7 +226,18 @@ def lstm(dim_in, dim_out, time_step, nl=1, nn=32):
 
 
 
+##### Coding complications
+
+The code of this project and mainly in the utils.py and model.py files. 
+
+Model constructors such as linear regression model, MLP models and LSTM models are in model.py. Most of the network low level implementation details are undercovered by the Keras high level wrapper funcions, such as Dense Layer, Activations and LSTM layer. However, we still need to pay special attention to the intermidiate connection between layers and be clear the input and output dimensions of each hidden layer, so that there is no error caused by dimension mismatch. For LSTM models in particular, when stacking multiple LSTM layers, we need to be careful on whether we want each layer to return all the output sequences at each time step or only the final sequence at the last time step. 
+
+All the ultility functions are defined in utils.py, including data transformation, speech LPC analysis and data visualization. Originally, I created a separate set of training and validation data just for LSTM models since it requires serialzied inputs, which made my code a bit messy since there are couple of places that I need to call data serialization functions. Later, I realized the MLP model input is just a special case for serialized data with time step of 1. Therefore, we serialized the input data only once at the begining of the code and used it for all our model by doing proper data slicing. Since LSTM required continious time steps of data, by doing this serialization of data at the start, it made the data shuffle step much easier and without breaking the order in a sequence of data.
+
+
+
 ## IV. Results
+
 ### Model Evaluation and Validation
 ##### Basic MLP model
 
@@ -249,6 +262,14 @@ The results of the basic MLP model can be found below, we trained the model usin
 
 
 ##### Improved MLP model
+
+The Table below listed various of different model parameters that we experimented with, note that we included dropout except for the basic MLP model, since we find that adding dropout is no harm across different configurations and it is good to use it in case there is model overfitting with more complex and deeper models.
+
+| Configs | 0 (basic MLP) | 1    | 2    | 3    | 4    | 5 (Best) |
+| ------- | ------------- | ---- | ---- | ---- | ---- | -------- |
+| nn      | 128           | 128  | 256  | 256  | 512  | 256      |
+| nl      | 1             | 1    | 1    | 2    | 2    | 3        |
+| dropout | False         | True | True | True | True | True     |
 
 We improved the basic MLP model with 256 neurons for each layer in a deeper architecture with 3 hidden layers. Due to the increasing number of parameters to train the model, we introduced 50% dropout rate for each of the hidden layers. With the help of a deeper and wider model, we could achieve another 3.3% and 2.9% MSE improvements on validation and testing set respectively, however at the cost of increasing total training parameters to 138502, a factor of 40X. We also experimented with more deeper and wider MLP models and didn't observe better performance. The results are shown in the Table and Figure below.
 
@@ -293,6 +314,13 @@ In order to utilize temporal information from the dataset, we implemented the ba
 
 
 ##### Improved LSTM model
+
+The Table below listed various of different model parameters that we experimented with. We note that the 64 LSTMs with two stack of layer give best results overall, more complex and deeper models beyond this configuration will still slightly lower the validation error, but the testing error increase as the model is getting into overfitting zone. This is understandable that model with more LSTM units and stacks increased the number of parameters in the model. A very complex model can easily overfit and difficult to train, given the data that we used for training is around 2.5 hours and the input feature dimension is only 20. 
+
+| Configs        | 0 (basic LSTM) | 1    | 2 (Best) | 3    | 4    | 5    |
+| -------------- | -------------- | ---- | -------- | ---- | ---- | ---- |
+| num LSTM unit  | 64             | 128  | 64       | 128  | 64   | 128  |
+| num LSTM stack | 1              | 1    | 2        | 2    | 3    | 3    |
 
 We also extended the basic LSTM model by allowing more temporal information in the input and incorporate future knowledge into the training. We observed that training and validation error getting even lower, meaning the model itself is more powerful in modeling data and we also slightly improve the testing error. We also explored more complex configurations by stacking more recurrent layer and add more LSTM unit at each layer, but seems that we have reached the limit of this type of model based on the training data. The results are shown below.
 
